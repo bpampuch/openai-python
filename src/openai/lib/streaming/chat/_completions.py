@@ -439,10 +439,11 @@ class ChatCompletionStreamState(Generic[ResponseFormatT]):
                 and not choice_snapshot.message.refusal
                 and is_given(self._rich_response_format)
             ):
-                choice_snapshot.message.parsed = from_json(
-                    bytes(choice_snapshot.message.content, "utf-8"),
-                    partial_mode=True,
-                )
+                if choice_snapshot.message.content and len(choice_snapshot.message.content.strip()) > 0:
+                    choice_snapshot.message.parsed = from_json(
+                        bytes(choice_snapshot.message.content, "utf-8"),
+                        partial_mode=True,
+                    )
 
             for tool_call_chunk in choice.delta.tool_calls or []:
                 tool_call_snapshot = (choice_snapshot.message.tool_calls or [])[tool_call_chunk.index]
